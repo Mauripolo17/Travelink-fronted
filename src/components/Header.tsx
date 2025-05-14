@@ -1,5 +1,5 @@
 import type React from "react"
-import { Globe, Search, Plane, Home, Tag } from "lucide-react"
+import { Globe, Search} from "lucide-react"
 import { useNavigate } from "react-router-dom";
 
 

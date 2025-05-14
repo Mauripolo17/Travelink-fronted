@@ -1,13 +1,10 @@
 "use client"
-import { CalendarIcon, Car, Hotel, Plane, Search } from "lucide-react"
+import { CalendarIcon, Car, Hotel, Plane } from "lucide-react"
 // import { Button } from 'primereact/button';
 import { useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
-import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
-import { Nullable } from "primereact/ts-helpers";
 import { reservaCarro, reservaHoteles, reservaVuelo } from "../interfaces/reservaCarro";
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -15,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Value } from "@radix-ui/react-select";
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import {
@@ -24,16 +20,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-interface City {
-  name: string;
-  code: string;
-}
 export default function SearchComponent() {
   // Estado para controlar qué pestaña está activa
   const [activeTab, setActiveTab] = useState("flights")
-  const [selectedCity, setSelectedCity] = useState<City | null>();
   const cities = ['New York', 'Rome', 'London', 'Istanbul']
-  const [value3, setValue3] = useState(1)
 
   const [formVuelo, setFormVuelo] = useState<reservaVuelo>({
     origen: "",
@@ -54,15 +44,6 @@ export default function SearchComponent() {
     desde: null,
     hasta: null,
   });
-
-  const [date, setDate] = useState<Date>()
-
-  const [dates, setDates] = useState<Nullable<(Date | null)[]> | null>(null);
-  const [formAutos, setFormAutos] = useState({
-    lugar: "",
-    fechaInicio: Date,
-    fechaFinal: Date
-  })
   const numeroDeHuespedes = [1, 2, 3, 4, 5,]
 
   const handleSelectChange = (value: string, name: string) => {
@@ -72,13 +53,6 @@ export default function SearchComponent() {
   const handleSelectChangeHoteles = (value: string, name: string) => {
     setFormsHoteles({ ...formHoteles, [name]: value })
   }
-  const handleEventoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormVuelo((prev) => ({
-      ...prev,
-      evento: e.target.value,
-    }))
-  }
-
   return (
     <div className="bg-transparent ">
       <div className="w-full max-w-3xl mx-auto p-20">

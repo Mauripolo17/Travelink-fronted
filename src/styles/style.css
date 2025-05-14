@@ -1,0 +1,240 @@
+/* Paleta de colores
+#5472d4 */
+@import url("https://fonts.googleapis.com/css?family=Audiowide");
+@import url("https://fonts.googleapis.com/css?family=Ubuntu|Lora");
+
+
+#carouselItem{
+    
+    display:flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    height: 300px;  
+    object-fit: cover;
+}
+#TituloP{
+    padding-top: 10px;
+    font-family: "Audiowide", sans-serif;
+    font-style: italic;
+    color: #5472d4;
+}
+
+.nav-link{
+    color: #5472d4;
+    
+}
+
+.searchButtom{
+    border-radius: 8px;
+    margin-left: 10px;
+    padding: 7px;
+}
+
+.form
+#ciudadImg{
+    width: 150px;   /* El tamaño que quieres que ocupe la imagen */
+    height: 150px;  /* Asegúrate de que sea cuadrado */
+    overflow: hidden;
+}
+
+.no-caret::after {
+    display: none !important;
+  }
+
+.FormularioReserva Button{
+    margin-top: 10px;
+    margin-bottom: 20px;
+border-radius: 8px;
+}
+
+#divReserva{
+    display: flex;
+    justify-content: center;
+    color: #646464;
+}
+.FormularioReserva{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-radius: 10px;
+    filter: drop-shadow(0 0 3px #33333315);;
+    background-color: rgb(255, 255, 255);
+    width: 60%;
+    margin-top: 30px;
+}
+
+.FormularioReserva form{
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.nReserva{
+    display: flex;
+    justify-content: end;
+    /* flex-direction: row; */
+}
+
+#ciudadImg{
+    width: 100%;
+    height: 100%;
+    object-fit:cover; 
+    border-radius: 8px;
+}
+
+
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link{
+    background-color: #5472d4;;
+}
+
+#header button{
+    justify-content: end;
+border-radius: 8px;
+}
+.carousel{
+    margin-bottom: 30px;
+}
+
+.carousel-item img {
+    filter: brightness(50%);  /* Ajusta el brillo. 50% la oscurece */
+  }
+
+  .buttomFormAuth{
+    border-radius: 8px;
+    width: 50%;
+  }
+
+  .buttomFormAuth2{
+    border-radius: 8px;
+    width: 50%;
+    background-color: rgba(255, 255, 255, 0);
+    border: #33333300;
+    color: #5472d4;
+  }
+#containerVuelo{
+    display: flex;
+    justify-items: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 150px;
+    margin: 10px;
+    margin-bottom: 40px;
+    background-color:aliceblue;
+}
+
+.p-inputnumber{
+    color: #5472d4;
+    background-color;
+}
+#bvCalendars{
+    
+    display: flex;
+    max-width: 300px; /* Establece el tamaño máximo */
+    width: 100%; 
+    padding-left: 10px;
+    justify-content: center;
+}
+
+#containerSearch{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 150px;
+    margin: 10px;
+    background-color:aliceblue;
+}
+
+.p-dropdown{
+    width: 50%;
+    margin-right: 0px;
+    background-color: rgb(255, 255, 255);
+}
+
+.p-dropdown-items{
+    margin-left: -30px;
+}
+
+#buscarViajeContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: space-around;
+}
+
+.divFormCol{
+    display: flex;
+    width: 110%;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+
+.custom-text-color {
+    color: #5472d4;
+  }
+
+.containerLogin{
+    color: #646464;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  #containerFormLogin{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 100%;
+    margin-top: 50px;
+    padding: 50px;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    filter: drop-shadow(0 0 7px #33333315);
+    background-color: rgb(255, 255, 255);
+  }
+
+  hr{
+    width: 85%;
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+
+#p-selectGroup{
+    align-self: flex-start;
+}
+
+#selectGroup{
+    width: 100%;
+    border-radius: 50%;
+}
+
+.p-selectbutton .p-button.p-highlight {
+    border-radius: 8px;
+    background: #5472d4;
+    color: #ffffff;
+    border: 0px
+}
+
+.p-selectbutton .p-button {
+    border-radius: 8px;
+    background: #ffffff00;
+    border: 0px;
+    color: #6c6c6c;
+}
+
+.p-selectbutton .p-button {
+    margin-bottom: 5px;
+}
+

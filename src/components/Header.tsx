@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   return (
     <header className="flex text-black items-center justify-between px-6 py-4 bg-transparent">
       <div className="flex items-center">
-        <img src="src/assets/travelink2.png" onClick={()=>{navigation('/')}} className="w-20" />
+        <img src="src/assets/travelink2.png" onClick={()=>{navigation('/')}} className="w-20 ml-20" />
       </div>
 
      

@@ -54,9 +54,9 @@ export default function SearchComponent() {
     setFormsHoteles({ ...formHoteles, [name]: value })
   }
   return (
-    <div className="bg-transparent ">
-      <div className="w-full max-w-3xl mx-auto p-20">
-        <h2 className="text-3xl my-10 text-white font-extrabold text-shadow-sm font-Montserrat flex justify-self-center uppercase">Encuentra tu alquiler perfecto</h2>
+    <div className="bg-transparent mb-30 h-full">
+      <div className="w-full max-w-2xl max-h-md mx-auto px-10">
+        <h2 className="text-3xl mb-5 text-white font-extrabold text-shadow-sm font-Montserrat flex justify-self-center uppercase">Encuentra tu alquiler perfecto</h2>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Tabs Header */}
           <div className="flex justify-evenly">

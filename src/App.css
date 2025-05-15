@@ -155,10 +155,16 @@ label{
   color: var(--color-gray-600);
 }
 body {
-  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  background-image: url('public/2669909_392096-PCFCQN-456.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
 } 
 
-
+.contenedor{
+  background-color: rgba(0, 0, 0, 0.659);
+}
 
 .ciudadDrop{
   width: -webkit-fill-available;

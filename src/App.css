@@ -154,15 +154,17 @@ label{
   font-family: var(--font-Montserrat);
   color: var(--color-gray-600);
 }
-body {
+
+
+.contenedor{
   background-image: url('public/2669909_392096-PCFCQN-456.svg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  background-color: rgba(0, 0, 0, 0.659);
+}
 
-} 
-
-.contenedor{
+.contenedor2{
   background-color: rgba(0, 0, 0, 0.659);
 }
 

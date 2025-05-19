@@ -8,7 +8,7 @@ export interface reservaCarro{
 export interface reservaVuelo{
     origen: string;
     destino: string;
-    fecha: Nullable<Date>
+    fecha: string
 }
 
 export interface reservaHoteles{

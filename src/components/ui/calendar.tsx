@@ -4,6 +4,7 @@ import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { format } from "date-fns";
 
 function Calendar({
   className,
@@ -14,17 +15,28 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      captionLayout="dropdown"
+      fromYear={2000} // o cualquier año mínimo que necesites
+      toYear={2022} 
+      formatters={{
+        formatCaption: (date, options) => format(date, "dd-MM-yyyy", options)
+      }}
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row gap-2",
         month: "flex flex-col gap-4",
-        caption: "flex justify-center pt-1 relative items-center w-full",
-        caption_label: "text-sm font-medium",
+        caption: "flex justify-center pt-1 relative items-center",
+        caption_label: "text-sm font-medium hidden",
         nav: "flex items-center gap-1",
         nav_button: cn(
-          buttonVariants({ variant: "outline" }),
+          buttonVariants({ variant: "ghost" }),
           "size-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         ),
+        caption_dropdowns: "flex flex-row justify-start items-center w-full",
+        dropdown_icon:'',
+        dropdown: "bg-background",
+        dropdown_month: "text-sm py-1.5 px-3 hover:text-accent-foreground rounded-md",
+        dropdown_year: "text-sm py-1.5 px-3 hover:text-accent-foreground rounded-md",
         nav_button_previous: "absolute left-1",
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-x-1",
@@ -33,7 +45,7 @@ function Calendar({
           "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
         cell: cn(
-          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md",
+          "relative p-1 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md",
           props.mode === "range"
             ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
             : "[&:has([aria-selected])]:rounded-md"

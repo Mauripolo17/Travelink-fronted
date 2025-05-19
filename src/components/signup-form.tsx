@@ -104,7 +104,6 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                           selected={date}
                           onSelect={setDate}
                           initialFocus
-                          captionLayout="dropdown-buttons"
                         />
                       </PopoverContent>
                     </Popover>

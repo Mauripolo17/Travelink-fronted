@@ -19,6 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Datepicker } from "flowbite-react";
 
 export default function SearchComponent() {
   // Estado para controlar qué pestaña está activa
@@ -28,7 +29,7 @@ export default function SearchComponent() {
   const [formVuelo, setFormVuelo] = useState<reservaVuelo>({
     origen: "",
     destino: "",
-    fecha: null,
+    fecha: '',
   });
 
   const [formHoteles, setFormsHoteles] = useState<reservaHoteles>({
@@ -54,7 +55,19 @@ export default function SearchComponent() {
     setFormsHoteles({ ...formHoteles, [name]: value })
   }
 
-  const handleOnSubmmuit = (e: any) =>{
+  const handleCalendar = (e: Date | undefined) => {
+    if (e) {
+      setFormVuelo({ ...formVuelo, fecha: e.toISOString() });
+    }
+  }
+
+  const handleCalendar2 = (e: Date | null) => {
+    if (e) {
+      setFormVuelo({ ...formVuelo, fecha: e.toISOString() });
+    }
+  }
+
+  const handleOnSubmmuit = (e: any) => {
     e.preventDefault()
     console.log(formVuelo)
   }
@@ -62,7 +75,7 @@ export default function SearchComponent() {
     <div className="bg-transparent mb-30 h-full">
       <div className="w-full max-w-2xl max-h-md mx-auto px-10">
         <h2 className="text-3xl mb-5 text-white font-extrabold text-shadow-sm font-Montserrat flex justify-self-center uppercase">Encuentra tu alquiler perfecto</h2>
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white rounded-lg shadow-lg ">
           {/* Tabs Header */}
           <div className="flex justify-evenly">
             <button
@@ -135,7 +148,6 @@ export default function SearchComponent() {
                       </Select>
                     </div>
                   </div>
-
                   {/* DatePicker */}
                   <div className="flex justify-center my-2 w-full max-w-[384px]">
                     <div className="flex flex-col w-full">
@@ -156,9 +168,10 @@ export default function SearchComponent() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={formVuelo.fecha as Date}
-                            onSelect={(e) => setFormVuelo({ ...formVuelo, fecha: e })}
-                            initialFocus
+                            selected={new Date(formVuelo.fecha)}
+                            onSelect={handleCalendar}
+                            fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
+                            toYear={2030} 
                           />
                         </PopoverContent>
                       </Popover>
@@ -203,7 +216,7 @@ export default function SearchComponent() {
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formHoteles.inicio ? format(formHoteles.inicio, "PPP") : <span>Pick a date</span>}
+                              {formHoteles.inicio ? format(formHoteles.inicio, "dd-MM-yyyy") : <span>Pick a date</span>}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -228,7 +241,7 @@ export default function SearchComponent() {
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formHoteles.hasta ? format(formHoteles.hasta, "PPP") : <span>Pick a date</span>}
+                              {formHoteles.hasta ? format(formHoteles.hasta, "dd-MM-yyyy") : <span>Pick a date</span>}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -316,7 +329,7 @@ export default function SearchComponent() {
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formCarro.desde ? format(formCarro.desde, "PPP") : <span>Pick a date</span>}
+                              {formCarro.desde ? format(formCarro.desde, "dd-MM-yyyy") : <span>Pick a date</span>}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -342,7 +355,7 @@ export default function SearchComponent() {
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formCarro.hasta ? format(formCarro.hasta, "PPP") : <span>Pick a date</span>}
+                              {formCarro.hasta ? format(formCarro.hasta, "dd-MM-yyyy") : <span>Pick a date</span>}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">

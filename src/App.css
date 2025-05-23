@@ -4,6 +4,7 @@
 @source "../node_modules/flowbite-datepicker";
 @custom-variant dark (&:is(.dark *));
 
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -11,7 +12,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary:  #2678a8;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -134,12 +135,13 @@
   --form: 730px;
 }
 
-
 @layer utilities {
   .w-fill-available {
     width: -webkit-fill-available;
   }
 }
+
+
 
 :root{
   --primary-color: #93a5cf;
@@ -154,7 +156,6 @@ label{
   font-family: var(--font-Montserrat);
   color: var(--color-gray-600);
 }
-
 
 .contenedor{
   background-image: url('public/2669909_392096-PCFCQN-456.svg');

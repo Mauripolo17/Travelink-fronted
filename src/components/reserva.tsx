@@ -16,17 +16,65 @@ import { cn } from "@/lib/utils"
 import { use, useState } from "react"
 import { format } from "date-fns"
 
+interface ReservationForm {
+  firstName: string;
+  lastName: string;
+  documentType: string;
+  documentNumber: string;
+  birthDate?: string;
+  gender: string;
+}
 
-export function Flights() {
+export function Reserva() {
   const [date, setDate] = useState<Date>()
   const nReservas = [1, 2, 3, 4, 5,]
   const [nReservas2, setNReservas2] = useState(1)
   const documentsType = ['Tarjeta de identidad', 'Cedula', 'Cedula extranjera', 'Pasaporte']
 
+  const [reservations, setReservations] = useState<ReservationForm[]>([{
+    firstName: '',
+    lastName: '',
+    documentType: documentsType[0],
+    documentNumber: '',
+    birthDate: '',
+    gender: ''
+  }]);
+
+  const handleInputChange = (index: number, field: keyof ReservationForm, value: any) => {
+    const updatedReservations = [...reservations];
+    updatedReservations[index] = {
+      ...updatedReservations[index],
+      [field]: value
+    };
+    setReservations(updatedReservations);
+  };
+
   const handleSelectChange = (value: string) => {
-    const e = Number(value)
-    setNReservas2(e)
-  }
+    const newCount = Number(value);
+    setNReservas2(newCount);
+
+    // Adjust the reservations array based on the new count
+    setReservations(prev => {
+      if (newCount > prev.length) {
+        // Add more empty forms
+        return [
+          ...prev,
+          ...Array(newCount - prev.length).fill(null).map(() => ({
+            firstName: '',
+            lastName: '',
+            documentType: documentsType[0],
+            documentNumber: '',
+            birthDate: undefined,
+            gender: ''
+          }))
+        ];
+      } else {
+        // Remove excess forms
+        return prev.slice(0, newCount);
+      }
+    });
+  };
+
   return (
     <div className="max-w-4xl">
       <div className="bg-white w-full rounded-sm p-8 shadow-md">
@@ -53,53 +101,75 @@ export function Flights() {
             <div className="grid gap-6 jus">
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="firstName">Nombre</Label>
-                  <Input id="firstName" name="firstName" placeholder="Juan" required />
+                  <Label htmlFor="lastName">Apellido</Label>
+                  <Input id={`firstName-${index}`} value={reservations[index]?.firstName || ''}
+                    onChange={(e) => handleInputChange(index, 'firstName', e.target.value)} name="lastName" placeholder="Pérez" required />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="lastName">Apellido</Label>
-                  <Input id="lastName" name="lastName" placeholder="Pérez" required />
+                  <Label htmlFor={`lastName-${index}`}>Apellido</Label>
+                  <Input
+                    id={`lastName-${index}`}
+                    value={reservations[index]?.lastName || ''}
+                    onChange={(e) => handleInputChange(index, 'lastName', e.target.value)}
+                    placeholder="Pérez"
+                    required
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="TI">Tipo de documento</Label>
-                  <Select>
-                    <SelectTrigger id="TI" className="w-full">
+                  <Label htmlFor={`TI-${index}`}>Tipo de documento</Label>
+                  <Select
+                    value={reservations[index]?.documentType}
+                    onValueChange={(value) => handleInputChange(index, 'documentType', value)}
+                  >
+                    <SelectTrigger id={`TI-${index}`} className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {documentsType.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
+                      {documentsType.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="documentid">Numero de documento</Label>
-                  <Input id="documentid" name="documentid" type="number" required />
+                  <Label htmlFor={`documentid-${index}`}>Numero de documento</Label>
+                  <Input
+                    id={`documentid-${index}`}
+                    value={reservations[index]?.documentNumber || ''}
+                    onChange={(e) => handleInputChange(index, 'documentNumber', e.target.value)}
+                    type="number"
+                    required
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="birthdate">Fecha de nacimiento</Label>
+                  <Label htmlFor={`birthdate-${index}`}>Fecha de nacimiento</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !reservations[index]?.birthDate && "text-muted-foreground"
+                        )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, "PPP", { locale: es }) : "Selecciona una fecha"}
+                        {reservations[index]?.birthDate ?
+                          format(reservations[index].birthDate, "dd-MM-yyyy", { locale: es }) :
+                          "Selecciona una fecha"
+                        }
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
                       <Calendar
                         mode="single"
-                        selected={date}
-                        onSelect={setDate}
+                        selected={new Date(reservations[index]?.birthDate || '')}
+                        onSelect={(date) => handleInputChange(index, 'birthDate', date)}
                         initialFocus
                         captionLayout="dropdown-buttons"
                       />
@@ -107,9 +177,12 @@ export function Flights() {
                   </Popover>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="gender">Género</Label>
-                  <Select>
-                    <SelectTrigger id="gender" className="w-full">
+                  <Label htmlFor={`gender-${index}`}>Género</Label>
+                  <Select
+                    value={reservations[index]?.gender || ''}
+                    onValueChange={(value) => handleInputChange(index, 'gender', value)}
+                  >
+                    <SelectTrigger id={`gender-${index}`} className="w-full">
                       <SelectValue placeholder="Selecciona tu género" />
                     </SelectTrigger>
                     <SelectContent>

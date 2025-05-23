@@ -1,8 +1,8 @@
 import { Nullable } from "primereact/ts-helpers";
 export interface reservaCarro{
     lugar:string
-    desde:Nullable<Date>
-    hasta:Nullable<Date>
+    desde:string
+    hasta:string
 }
 
 export interface reservaVuelo{
@@ -13,8 +13,8 @@ export interface reservaVuelo{
 
 export interface reservaHoteles{
     ciudad:string
-    inicio:Nullable<Date>
-    hasta:Nullable<Date>
+    inicio:string
+    hasta:string
     adultos:number
     menores:number
 }

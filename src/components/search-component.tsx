@@ -1,7 +1,7 @@
 "use client"
 import { CalendarIcon, Car, Hotel, Plane } from "lucide-react"
 // import { Button } from 'primereact/button';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { reservaCarro, reservaHoteles, reservaVuelo } from "../interfaces/reservaCarro";
 import { Button } from "@/components/ui/button"
@@ -20,30 +20,34 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Datepicker } from "flowbite-react";
+import { flighToSearch, vueloService } from "@/api/vuelosService";
+import { useReservaContext } from "@/context/ReservaContext car";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchComponent() {
   // Estado para controlar qué pestaña está activa
   const [activeTab, setActiveTab] = useState("flights")
-  const cities = ['New York', 'Rome', 'London', 'Istanbul']
+  // const cities = ['New York', 'Rome', 'London', 'Istanbul']
 
-  const [formVuelo, setFormVuelo] = useState<reservaVuelo>({
+  const [formVuelo, setFormVuelo] = useState<flighToSearch>({
     origen: "",
     destino: "",
-    fecha: '',
+    desde: '',
+    hasta: null,
   });
 
   const [formHoteles, setFormsHoteles] = useState<reservaHoteles>({
     ciudad: '',
-    inicio: null,
-    hasta: null,
+    inicio: '',
+    hasta: '',
     adultos: 0,
     menores: 0
   })
 
   const [formCarro, setFormCarro] = useState<reservaCarro>({
     lugar: "",
-    desde: null,
-    hasta: null,
+    desde: '',
+    hasta: '',
   });
   const numeroDeHuespedes = [1, 2, 3, 4, 5,]
 
@@ -57,24 +61,52 @@ export default function SearchComponent() {
 
   const handleCalendar = (e: Date | undefined) => {
     if (e) {
-      setFormVuelo({ ...formVuelo, fecha: e.toISOString() });
+      setFormVuelo({ ...formVuelo, desde: e.toISOString() });
     }
   }
 
-  const handleCalendar2 = (e: Date | null) => {
-    if (e) {
-      setFormVuelo({ ...formVuelo, fecha: e.toISOString() });
+  const [cities, setCities] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      await loadCitys();
+    })();
+  }, [])
+
+  const loadCitys = async () => {
+    try {
+      const response = await vueloService.getCiudades();
+      const data = await response;
+      setCities(data);
+    } catch (error) {
+      console.error('Error fetching cities:', error);
     }
   }
+  // const handleCalendar2 = (e: Date | null) => {
+  //   if (e) {
+  //     setFormVuelo({ ...formVuelo, desde: e.toISOString() });
+  //   }
+  // }
 
+const {setFlightToSearch} = useReservaContext();
+
+const navegation = useNavigate()
   const handleOnSubmmuit = (e: any) => {
-    e.preventDefault()
-    console.log(formVuelo)
+    e.preventDefault();
+    if (activeTab === "flights") {
+      setFlightToSearch(formVuelo);
+      navegation("/flights")
+      
+    } else if (activeTab === "hotels") {
+      console.log(formHoteles)
+    } else if (activeTab === "cars") {
+      console.log(formCarro)
+    }
   }
   return (
     <div className="bg-transparent mb-30 h-full">
       <div className="w-full max-w-2xl max-h-md mx-auto px-10">
-        <h2 className="text-3xl mb-5 text-white font-extrabold text-shadow-sm font-Montserrat flex justify-self-center uppercase">Encuentra tu alquiler perfecto</h2>
+        <h2 className="text-3xl mb-5 text-white font-bold text-shadow-sm font-Montserrat flex justify-self-center uppercase">Encuentra tu alquiler perfecto</h2>
         <div className="bg-white rounded-lg shadow-lg ">
           {/* Tabs Header */}
           <div className="flex justify-evenly">
@@ -158,20 +190,21 @@ export default function SearchComponent() {
                             variant="outline"
                             className={cn(
                               "w-full justify-start text-left font-normal",
-                              !formVuelo.fecha && "text-muted-foreground"
+                              !formVuelo.desde && "text-muted-foreground"
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {formVuelo.fecha ? format(formVuelo.fecha, "dd-MM-yyyy") : <span>Pick a date</span>}
+                            {formVuelo.desde ? format(formVuelo.desde, "dd-MM-yyyy") : <span>Pick a date</span>}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={new Date(formVuelo.fecha)}
+                            selected={new Date(formVuelo.desde)}
                             onSelect={handleCalendar}
                             fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
-                            toYear={2030} 
+                            toYear={2030}
+                            disabled={{ before: new Date(Date.now()) }}
                           />
                         </PopoverContent>
                       </Popover>
@@ -222,9 +255,12 @@ export default function SearchComponent() {
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              selected={formHoteles.inicio as Date}
-                              onSelect={(e) => setFormsHoteles({ ...formHoteles, inicio: e })}
+                              selected={new Date(formHoteles.inicio)}
+                              onSelect={(e) => e && setFormsHoteles({ ...formHoteles, inicio: e?.toDateString() })}
                               initialFocus
+                              fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
+                              toYear={2030}
+                              disabled={{ before: new Date(Date.now()) }}
                             />
                           </PopoverContent>
                         </Popover>
@@ -247,9 +283,12 @@ export default function SearchComponent() {
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              selected={formHoteles.hasta as Date}
-                              onSelect={(e) => setFormsHoteles({ ...formHoteles, hasta: e })}
+                              selected={new Date(formHoteles.hasta)}
+                              onSelect={(e) => e && setFormsHoteles({ ...formHoteles, hasta: e.toISOString() })}
                               initialFocus
+                              fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
+                              toYear={2030}
+                              disabled={{ before: new Date(Date.now()) }}
                             />
                           </PopoverContent>
                         </Popover>
@@ -335,9 +374,12 @@ export default function SearchComponent() {
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              selected={formCarro.desde as Date}
-                              onSelect={(e) => setFormCarro({ ...formCarro, desde: e })}
+                              selected={new Date(formCarro.desde)}
+                              onSelect={(e) => e && setFormCarro({ ...formCarro, desde: e.toISOString() })}
                               initialFocus
+                              fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
+                              toYear={2030}
+                              disabled={{ before: new Date(Date.now()) }}
                             />
                           </PopoverContent>
                         </Popover>
@@ -361,9 +403,12 @@ export default function SearchComponent() {
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              selected={formCarro.hasta as Date}
-                              onSelect={(e) => setFormCarro({ ...formCarro, hasta: e })}
+                              selected={new Date(formCarro.hasta)}
+                              onSelect={(e) => e && setFormCarro({ ...formCarro, hasta: e.toISOString() })}
                               initialFocus
+                              fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
+                              toYear={2030}
+                              disabled={{ before: new Date(Date.now()) }}
                             />
                           </PopoverContent>
                         </Popover>
@@ -375,7 +420,7 @@ export default function SearchComponent() {
               )}
 
               <div className="flex mt-10 mb-5 justify-center">
-                <Button type="submit">Buscar</Button>
+                <Button type="submit" >Buscar</Button>
               </div>
             </div>
           </form>

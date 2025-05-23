@@ -15,10 +15,24 @@ import { es } from "date-fns/locale"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useNavigate } from "react-router-dom"
+import { signupRequest } from "@/api/authService"
+import { useAuth } from "@/context/AuthContext"
 
 export function SignupForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
   const [date, setDate] = useState<Date>()
   const [passwordError, setPasswordError] = useState<string | null>(null)
+  const { signup} = useAuth()
+  const [signupRequest, setSignupRequest] = useState<signupRequest>({
+    username:'',
+    email:'',
+    password:'',
+    nombre:'',
+    apellido:'',
+    numeroDocumento:0,
+    direccion:'',
+    telefono:0,
+    fechaDeNacimiento:'',
+  })
 
   const handlePasswordConfirm = (e: React.FocusEvent<HTMLInputElement>) => {
     const password = document.getElementById("password") as HTMLInputElement
@@ -29,6 +43,12 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
     }
   }
   const navigation = useNavigate();
+
+  const handlesignup = async (e: any) => {
+    e.preventDefault()
+    signup(signupRequest)
+    navigation('/login')
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -37,9 +57,9 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
           <CardDescription>Regístrate con tu cuenta de Google</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handlesignup}>
             <div className="grid gap-6">
-              <div className="flex flex-col gap-4">        
+              <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
                     <path
@@ -54,24 +74,24 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">O continúa con</span>
               </div>
               <div className="grid gap-6">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="firstName">Nombre</Label>
-                    <Input id="firstName" name="firstName" placeholder="Juan" required />
+                    <Input id="firstName" name="firstName" value={signupRequest.nombre} onChange={(value)=>{setSignupRequest({...signupRequest, nombre: value.target.value} )}} placeholder="Juan" required />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="lastName">Apellido</Label>
-                    <Input id="lastName" name="lastName" placeholder="Pérez" required />
+                    <Input id="lastName" name="lastName" value={signupRequest.apellido} onChange={(value)=>{setSignupRequest({...signupRequest, apellido: value.target.value} )}} placeholder="Pérez" required />
                   </div>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Correo electrónico</Label>
-                  <Input id="email" type="email" name="email" placeholder="juan@ejemplo.com" required />
+                  <Input id="email" type="email" name="email" value={signupRequest.email} onChange={(value)=>{setSignupRequest({...signupRequest, email: value.target.value} )}} placeholder="juan@ejemplo.com" required />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="password">Contraseña</Label>
-                    <Input id="password" name="password" type="password" required />
+                    <Input id="password" name="password" value={signupRequest.password} onChange={(value)=>{setSignupRequest({...signupRequest, password: value.target.value} )}} type="password" required />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
@@ -85,47 +105,47 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                     {passwordError && <p className="text-sm text-destructive">{passwordError}</p>}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="birthdate">Fecha de nacimiento</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
+                          className={cn("w-full justify-start text-left font-normal", !signupRequest.fechaDeNacimiento && "text-muted-foreground")}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {date ? format(date, "PPP", { locale: es }) : "Selecciona una fecha"}
+                          {signupRequest.fechaDeNacimiento ? format(signupRequest.fechaDeNacimiento, "dd-MM-yyyy", { locale: es }) : "Selecciona una fecha"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={date}
-                          onSelect={setDate}
+                          selected={new Date(signupRequest.fechaDeNacimiento)}
+                          onSelect={(e) => e && setSignupRequest({ ...signupRequest, fechaDeNacimiento: e.toISOString()})}
                           initialFocus
+                          
                         />
                       </PopoverContent>
                     </Popover>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="gender">Género</Label>
-                    <Select>
-                      <SelectTrigger id="gender" className="w-full">
-                        <SelectValue placeholder="Selecciona tu género" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Masculino</SelectItem>
-                        <SelectItem value="female">Femenino</SelectItem>
-                        <SelectItem value="non-binary">No binario</SelectItem>
-                        <SelectItem value="other">Otro</SelectItem>
-                        <SelectItem value="prefer-not-to-say">Prefiero no decirlo</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="numerID">Numero de documento</Label>
+                    <Input type="number" id="numerID" name="numerID" value={signupRequest.numeroDocumento} onChange={(value)=>{setSignupRequest({...signupRequest, numeroDocumento: Number(value.target.value)} )}} placeholder="Juan" required />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="telefono">Telefono</Label>
+                    <Input id="telefono" type="number" name="telefono" value={signupRequest.telefono} onChange={(value)=>{setSignupRequest({...signupRequest, telefono: Number(value.target.value)} )}} placeholder="Juan" required />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="direccion">Direccion</Label>
+                    <Input id="direccion" name="direccion" value={signupRequest.direccion} onChange={(value)=>{setSignupRequest({...signupRequest, direccion: value.target.value} )}} placeholder="Pérez" required />
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button onClick={handlesignup} className="w-full">
                   Crear cuenta
                 </Button>
               </div>

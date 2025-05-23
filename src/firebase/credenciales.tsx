@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 
 // Añade aquí tus credenciales
 const firebaseConfig = {
-  apiKey: "AIzaSyBYw5usV9U9nRP2kD-YIonHPZWL4ur7Jbk",
+  apiKey: "",
   authDomain: "travelink-16032.firebaseapp.com",
   projectId: "travelink-16032",
   storageBucket: "travelink-16032.firebasestorage.app",

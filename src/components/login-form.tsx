@@ -10,6 +10,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useNavigate } from "react-router-dom"
+import { use, useEffect, useState } from "react"
+import { useAuth } from "@/context/AuthContext"
+import { is } from "date-fns/locale"
 
 export function LoginForm({
   className,
@@ -17,7 +20,24 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
 
   const navigation = useNavigate();
+  const { login, user } = useAuth();
 
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const logingRequest = {
+      username: event.currentTarget.email.value,
+      password: event.currentTarget.password.value,
+    }
+    login(logingRequest)
+    // setIsLoading(true)
+  }
+
+  useEffect(() => {
+    if (user) {
+      navigation('/dashboard')
+    }
+  }, [user])
   return (
     <div className={cn("flex flex-col gap-6 ", className)} {...props}>
       <Card>
@@ -28,9 +48,9 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
-              <div className="flex flex-col gap-4">                
+              <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -74,7 +94,7 @@ export function LoginForm({
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <a onClick={()=>{navigation('/signup')}} href="#" className="underline underline-offset-4">
+                <a onClick={() => { navigation('/signup') }} href="#" className="underline underline-offset-4">
                   Sign up
                 </a>
               </div>

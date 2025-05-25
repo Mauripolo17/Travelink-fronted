@@ -1,11 +1,15 @@
 import type React from "react"
 import { Globe, Search} from "lucide-react"
 import { useNavigate } from "react-router-dom";
+import { use } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 
 
 const Header: React.FC = () => {
   const navigation = useNavigate();
+  const {  user } = useAuth();
+
   return (
     <header className="flex text-black items-center justify-between px-6 py-4 bg-transparent">
       <div className="flex items-center">
@@ -18,11 +22,13 @@ const Header: React.FC = () => {
         <button className="text-inherit bg-white p-2 shadow-sm rounded-full hover:bg-white/10">
           <Globe className="w-5 h-5" />
         </button>
-        <button className="text-inherit p-2  bg-white shadow-sm rounded-full hover:bg-white/10">
-          <Search className="w-5 h-5" />
-        </button>
+        
         <button className="text-inherit  bg-white px-4 shadow-sm py-2 rounded-full hover:bg-white/10">My Trips</button>
-        <button onClick={()=>{navigation('/login')}} className="bg-white shadow-sm text-inherit px-4 py-2 rounded-full hover:bg-white/20">Sign In</button>
+        {user ? (
+          <button className="text-inherit bg-white px-4 shadow-sm py-2 rounded-full hover:bg-white/10" onClick={() => navigation('/dashboard')}>Dashboard</button>
+        ) : (
+          <button className="text-inherit bg-white px-4 shadow-sm py-2 rounded-full hover:bg-white/10" onClick={() => navigation('/login')}>Login</button>
+        )}
       </div>
     </header>
   )

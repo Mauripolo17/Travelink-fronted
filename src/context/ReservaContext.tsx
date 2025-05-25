@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { ReservaVuelo } from "../api/reservasService";
+import { Reserva } from "../api/reservasService";
 import { flighToSearch, VueloInfo } from "../api/vuelosService";
 
 interface ReservaContextType {
-  reserva: ReservaVuelo | null;
+  reserva: Reserva | null;
   flightToSearch: flighToSearch;
   searchMode: any;
   setSearchMode: React.Dispatch<React.SetStateAction<any>>;
@@ -23,12 +23,12 @@ export const useReservaContext = () => {
 };
 
 export const ReservaProvider = ({ children }: { children: ReactNode }) => {
-  const [reserva, setReserva] = useState<ReservaVuelo | null>(null);
+  const [reserva, setReserva] = useState<Reserva | null>(null);
   const [flightSelected, setFlightSelected] = useState<VueloInfo |null>(JSON.parse(localStorage.getItem("flightSelected") || "null"));
   const [flightToSearch, setFlightToSearch] = useState<flighToSearch>({
     origen: "",
     destino: "",
-    desde: null,
+    desde: '',
     hasta: null,
   });
 

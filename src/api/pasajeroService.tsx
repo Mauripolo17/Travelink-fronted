@@ -7,7 +7,6 @@ export interface Pasajero {
     numeroDocumento: number;
     fechaDeNacimiento: string;
     sexo: string;
-    reserva: number;
 }
 
 const baseUrl = "http://localhost:8080/api/pasajeros";

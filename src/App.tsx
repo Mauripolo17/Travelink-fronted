@@ -13,6 +13,9 @@ import PrivateRoutes from './PrivateRoutes.tsx';
 import { ReservaProvider } from './context/ReservaContext car.tsx';
 import { Reserva } from './components/reserva.tsx';
 import ReservaPage from './pages/reserva-page.tsx';
+import FlightResults from './pages/flight-results.-page.tsx';
+import VehicleResults from './pages/vehicle-results-page.tsx';
+import VehicleRentPage from './pages/vehicle-rent-page.tsx';
 
 function App() {
   return (
@@ -33,6 +36,9 @@ function App() {
               <Route path="/reserva" element={<ReservaPage />} />
               </Route>
               
+              <Route path="/flights" element={<FlightResults />} />
+              <Route path="/vehicles" element={<VehicleResults/>} />
+              <Route path="/vehicles/reservar/" element={<VehicleRentPage/>} />
             </Routes>
           </main>
           <Footer />

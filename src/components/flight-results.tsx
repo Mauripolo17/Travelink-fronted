@@ -7,6 +7,7 @@ import { useReservaContext } from "@/context/ReservaContext car";
 import { VueloInfo, vueloService } from "@/api/vuelosService";
 import { useNavigate } from "react-router-dom";
 
+
 export default function FlightResults() {
 
     const [openModal, setOpenModal] = useState(false);

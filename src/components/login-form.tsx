@@ -12,7 +12,9 @@ import { Label } from "@/components/ui/label"
 import { useNavigate } from "react-router-dom"
 import { use, useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
-import { is } from "date-fns/locale"
+import { toast } from "sonner"
+import { Toaster } from "@/components/ui/sonner"
+import { set } from "date-fns"
 
 export function LoginForm({
   className,
@@ -20,16 +22,22 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
 
   const navigation = useNavigate();
-  const { login, user } = useAuth();
+  const { login, user, errormsg, setErrormsg } = useAuth();
 
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const logingRequest = {
       username: event.currentTarget.email.value,
       password: event.currentTarget.password.value,
     }
-    login(logingRequest)
+    try{
+      login(logingRequest)
+    }catch(error){
+      console.error("Error al inizxcvzxczcx:", error);
+     
+    }
+    
     // setIsLoading(true)
   }
 
@@ -37,7 +45,11 @@ export function LoginForm({
     if (user) {
       navigation('/dashboard')
     }
-  }, [user])
+    if (errormsg!='') {
+      toast.error(errormsg)
+    setErrormsg('')
+    }
+  }, [user, errormsg])
   return (
     <div className={cn("flex flex-col gap-6 ", className)} {...props}>
       <Card>
@@ -106,6 +118,8 @@ export function LoginForm({
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </div>
+      <Toaster position="top-right" expand={true} richColors />
     </div>
+    
   )
 }

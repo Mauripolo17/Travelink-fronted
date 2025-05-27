@@ -19,6 +19,7 @@ import {
 } from "firebase/auth";
 import { getFirestore, doc, collection, setDoc, getDoc } from "firebase/firestore";
 import { log } from "console";
+import { set } from "date-fns";
 const auth = getAuth(firebaseApp);
 
 
@@ -29,6 +30,8 @@ interface AuthContextType {
   logout: () => void;
   token: string | null;
   user: cliente | null;
+  errormsg: string;
+  setErrormsg: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -49,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  const [errormsg, setErrormsg] = useState<string>('');
   async function getInfoUser(uid: any) {
     const docuRef = doc(firestore, `usuarios/${uid}`);
     const docuCifrada = await getDoc(docuRef);
@@ -99,13 +103,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (loginRequest: loginRequest) => {
     try {
-      signInWithEmailAndPassword(auth, loginRequest.username, loginRequest.password);
-
+      await signInWithEmailAndPassword(auth, loginRequest.username, loginRequest.password);
+      // Redirigir o realizar acciones adicionales después del inicio de sesión exitoso
     } catch (error: any) {
-      console.error(
-        "Error al iniciar sesión:",
-        error.response?.data?.message || error.message
-      );
+      switch (error.code) {
+        case "auth/user-not-found":
+          setErrormsg("No se encontró una cuenta con este correo electrónico.");
+          break;
+        case "auth/wrong-password":
+          setErrormsg("La contraseña es incorrecta.");
+          break;
+        case "auth/invalid-email":
+          setErrormsg("El formato del correo electrónico no es válido.");
+          break;
+        case "auth/too-many-requests":
+          setErrormsg("Demasiados intentos fallidos. Intenta nuevamente más tarde.");
+          break;
+        case 'auth/invalid-credential':
+          setErrormsg("Las credenciales proporcionadas son inválidas.");
+          break;
+        default:
+          setErrormsg("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.");
+      }
     }
   };
 
@@ -169,7 +188,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, login, signup, logout }}
+      value={{ user, token, login, signup, logout, errormsg, setErrormsg }}
     >
       {children}
     </AuthContext.Provider>

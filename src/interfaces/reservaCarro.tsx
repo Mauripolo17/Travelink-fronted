@@ -1,6 +1,6 @@
 import { Nullable } from "primereact/ts-helpers";
 export interface reservaCarro{
-    lugar:string
+    lugar:number
     desde:string
     hasta:string
 }

@@ -2,13 +2,21 @@
 import { CarResponse } from "@/interfaces/car"
 import { Button } from "./button";
 import { useNavigate } from "react-router-dom";
+import { use } from "react";
+import { useReservaContext } from "@/context/ReservaContext";
+import { set } from "date-fns";
 
 export function ModalCar({ car, onClose }: { car: CarResponse; onClose: () => void }) {
 
 const navigate = useNavigate();
+const {carToRent, setCarToRent} = useReservaContext();
 
 const handleReservar = (car: CarResponse) => {
-  navigate(`reservar/`); // o la ruta que corresponda
+  setCarToRent(car);
+  setTimeout(() => {
+    navigate(`reservar/`);
+  }, 1000); // Simula un retraso para mostrar el mensaje de reserva
+  console.log("Reservando vehículo:", car);
 };
 
 return (

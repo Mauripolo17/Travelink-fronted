@@ -1,5 +1,4 @@
 import FlightResults from "@/components/flight-results";
-import { Flights } from "@/components/reserva";
 
 
 export default function FlightResultsPage() {

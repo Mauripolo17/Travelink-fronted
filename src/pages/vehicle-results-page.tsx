@@ -4,20 +4,18 @@ import { useEffect, useState } from "react";
 import VehicleResultsComponent from "@/components/vehicle-results-component";
 import { CarResponse } from "@/interfaces/car";
 import { VehicleService } from "@/services/VehicleService";
+import { useReservaContext } from "@/context/ReservaContext";
 
 export default function VehicleResults() {
   const [cars, setCars] = useState<CarResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
-  const locacionId = 1; // por ejemplo: New York = 1
-  const inicio = "2024-05-26";
-  const fin = "2026-05-28";
+  const { carToSearch } = useReservaContext();
 
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const data = await VehicleService.getAvailableCars(locacionId, inicio, fin);
+        const data = await VehicleService.getAvailableCars(carToSearch);
         setCars(data);
       } catch (error) {
         console.error("Error al obtener los vehículos:", error);

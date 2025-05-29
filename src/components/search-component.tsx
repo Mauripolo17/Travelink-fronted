@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/popover"
 import { Datepicker } from "flowbite-react";
 import { flighToSearch, vueloService } from "@/api/vuelosService";
-import { useReservaContext } from "@/context/ReservaContext car";
+import { useReservaContext } from "@/context/ReservaContext";
 import { useNavigate } from "react-router-dom";
 
 export default function SearchComponent() {
@@ -45,7 +45,7 @@ export default function SearchComponent() {
   })
 
   const [formCarro, setFormCarro] = useState<reservaCarro>({
-    lugar: "",
+    lugar: 0,
     desde: '',
     hasta: '',
   });
@@ -67,6 +67,23 @@ export default function SearchComponent() {
 
   const [cities, setCities] = useState<string[]>([]);
 
+  const citisCar =
+    [
+      {
+        "id": 1,
+        "nombre": "Santa Marta"
+      },
+      {
+        "id": 2,
+        "nombre": "Bogota"
+      },
+      {
+        "id": 3,
+        "nombre": "Barranquilla"
+      }
+    ]
+
+
   useEffect(() => {
     (async () => {
       await loadCitys();
@@ -82,24 +99,20 @@ export default function SearchComponent() {
       console.error('Error fetching cities:', error);
     }
   }
-  // const handleCalendar2 = (e: Date | null) => {
-  //   if (e) {
-  //     setFormVuelo({ ...formVuelo, desde: e.toISOString() });
-  //   }
-  // }
+  const { setFlightToSearch, setCarToSearch } = useReservaContext();
 
-const {setFlightToSearch} = useReservaContext();
-
-const navegation = useNavigate()
+  const navegation = useNavigate()
   const handleOnSubmmuit = (e: any) => {
     e.preventDefault();
     if (activeTab === "flights") {
       setFlightToSearch(formVuelo);
       navegation("/flights")
-      
+
     } else if (activeTab === "hotels") {
       console.log(formHoteles)
     } else if (activeTab === "cars") {
+      setCarToSearch(formCarro);
+      navegation("/vehicles")
       console.log(formCarro)
     }
   }
@@ -339,14 +352,14 @@ const navegation = useNavigate()
                   <div className="flex justify-center gap-1 my-2">
                     <div className="flex flex-col w-full max-w-[384px]">
                       <label htmlFor="">Ciudad</label>
-                      <Select onValueChange={(value) => setFormCarro({ ...formCarro, lugar: value })}>
+                      <Select onValueChange={(value) => setFormCarro({ ...formCarro, lugar: Number(value) })}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Origen" />
                         </SelectTrigger>
                         <SelectContent>
-                          {cities.map((citie) => (
-                            <SelectItem key={citie} value={citie}>
-                              {citie}
+                          {citisCar.map((city) => (
+                            <SelectItem key={city.id} value={String(city.id)}>
+                              {city.nombre}
                             </SelectItem>
                           ))}
                         </SelectContent>

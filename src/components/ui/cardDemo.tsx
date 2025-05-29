@@ -14,7 +14,7 @@ export function CardDemo({ car }: { car: CarResponse }) {
 
   return (
     <>
-    <div onClick={() => setShowModal(true)} className="max-w-xs w-full group/card bg-gray-50 rounded-lg shadow-md overflow-hidden text-gray-700 hover:text-gray-200">
+    <div onClick={() => setShowModal(true)} className="max-w-lg w-full group/card bg-gray-50 rounded-lg shadow-md overflow-hidden text-gray-700 hover:text-gray-200">
       <div
         className={cn(
           " cursor-pointer overflow-hidden relative card h-96 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4",
@@ -24,10 +24,9 @@ export function CardDemo({ car }: { car: CarResponse }) {
         <div className="flex flex-row items-center space-x-4 z-10">
         </div>
         <div className="text content">
-            <img src= { img } alt="" />
-            <p className="font-normal text-sm relative z-10 my-4 ">
-                Card with Author avatar, complete name and time to read - most
-                suitable for blogs.
+            <img src= { img } alt="" className="" />
+            <p className="font-bold uppercase text-sm relative z-10 my-4 ">
+                {car.marca} {car.modelo} 
             </p>
             <Button variant={"destructive"}>View details</Button>
         </div>

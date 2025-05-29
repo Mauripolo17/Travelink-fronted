@@ -14,16 +14,18 @@ import { Button } from "@/components/ui/button"
 import { CalendarIcon } from "lucide-react"
 import { es } from "date-fns/locale"
 import { cn } from "@/lib/utils"
-import { use, useState } from "react"
-import { format } from "date-fns"
+import { use, useEffect, useState } from "react"
+import { format, set } from "date-fns"
 import { toast } from "sonner"
 import { VueloInfo } from "@/api/vuelosService"
 import { reservaService } from "@/api/reservasService"
-import { useReservaContext } from "@/context/ReservaContext car"
+import { useReservaContext } from "@/context/ReservaContext"
 import { useAuth } from "@/context/AuthContext"
 import { Pasajero } from "@/api/pasajeroService"
 import { useNavigate } from "react-router-dom"
-
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
+import PaymentMethod from "./payment-method"
+import { create } from "domain"
 
 export interface Reserva {
   id?: number;
@@ -39,9 +41,9 @@ export function Reserva() {
   const nReservas = [1, 2, 3, 4, 5,]
   const [nReservas2, setNReservas2] = useState(1)
   const documentsType = ['Tarjeta de identidad', 'Cedula', 'Cedula extranjera', 'Pasaporte']
-
-  const { flightSelected } = useReservaContext()
+  const { flightSelected, setFlightSelected, paymentSuccess, managePayment } = useReservaContext()
   const { user } = useAuth()
+  const [openModal, setOpenModal] = useState(false);
 
   const [reservations, setReservations] = useState<Pasajero[]>([{
     nombre: '',
@@ -79,7 +81,7 @@ export function Reserva() {
             tipoDocumento: '',
             numeroDocumento: 0,
             fechaDeNacimiento: '',
-            sexo: ''           
+            sexo: ''
           }))
         ];
       } else {
@@ -89,8 +91,15 @@ export function Reserva() {
     });
   };
 
+  useEffect(() => {
+    if (paymentSuccess){
+      createReservation()
+    }
+  }, [paymentSuccess]);
   const handleReservation = async () => {
     // Validate all reservation data
+   
+
     const hasEmptyFields = reservations.some(reservation =>
       !reservation.nombre ||
       !reservation.apellido ||
@@ -105,7 +114,10 @@ export function Reserva() {
       })
       return;
     }
+    setOpenModal(true);
+  };
 
+  async function createReservation() {
     try {
       // Show loading state
       const loadingToast =
@@ -113,15 +125,6 @@ export function Reserva() {
           description: "Espere un momento mientras procesamos su reserva..."
         });
 
-
-      // Format data if needed - for example, ensure dates are in ISO format
-      // const formattedReservations = reservations.map(res => ({
-      //   ...res,
-      //   fechaDeNacimiento: res.fechaDeNacimiento ? new Date(res.fechaDeNacimiento).toISOString() : undefined
-      // }));
-
-      // Send data to your API
-      // Replace with your actual API endpoint
       const reservaData: Reserva = {
         fechaReserva: new Date().toISOString().slice(0, 10),
         cliente: user?.id as string,
@@ -133,16 +136,17 @@ export function Reserva() {
       toast("¡Reserva exitosa!", {
         description: `Su reserva ha sido procesada con exito.`,
       });
+      managePayment(response as Reserva); ;
       setTimeout(() => {
         navigation("/")
-      }, 2000);
+      }, 3000);
     } catch (error) {
       console.error('Error al procesar la reserva:', error);
       toast("Error en la reserva", {
         description: "Ha ocurrido un problema al procesar su reserva. Por favor intente nuevamente."
       });
     }
-  };
+  }
   return (
     <div className="max-w-4xl">
       <div className="bg-white w-full rounded-sm p-8 shadow-md">
@@ -270,6 +274,12 @@ export function Reserva() {
             <Button onClick={handleReservation} >
               Reservar
             </Button>
+            <Modal size="4xl" className="self-center min-h-svh overflow-auto font-Montserrat" show={openModal} onClose={() => setOpenModal(false)}>
+              <ModalHeader className="p-4">Pago {flightSelected?.id}</ModalHeader>
+              <ModalBody>
+               <PaymentMethod reservationDetails={flightSelected as VueloInfo}/>
+              </ModalBody>
+            </Modal>
             <Toaster position="top-right" expand={true} richColors />
           </div>
         </div>

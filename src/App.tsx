@@ -10,12 +10,13 @@ import  Dashboard  from './pages/dashboard-page.tsx';
 import FlightResultsPage from './pages/flight-results.-page.tsx';
 import { AuthProvider } from './context/AuthContext.tsx';
 import PrivateRoutes from './PrivateRoutes.tsx';
-import { ReservaProvider } from './context/ReservaContext car.tsx';
+import { ReservaProvider } from './context/ReservaContext.tsx';
 import { Reserva } from './components/reserva.tsx';
 import ReservaPage from './pages/reserva-page.tsx';
 import FlightResults from './pages/flight-results.-page.tsx';
 import VehicleResults from './pages/vehicle-results-page.tsx';
 import VehicleRentPage from './pages/vehicle-rent-page.tsx';
+import { PaymentPage } from './pages/payment-page.tsx';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
               <Route element={<PrivateRoutes />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/reserva" element={<ReservaPage />} />
+              <Route path="/payment" element={<PaymentPage />} />
               </Route>
               
               <Route path="/flights" element={<FlightResults />} />

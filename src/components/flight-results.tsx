@@ -3,7 +3,7 @@ import { Info } from "lucide-react"
 import { use, useEffect, useState } from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
 import { Vuelo } from "@/interfaces/vuelos";
-import { useReservaContext } from "@/context/ReservaContext car";
+import { useReservaContext } from "@/context/ReservaContextFly";
 import { VueloInfo, vueloService } from "@/api/vuelosService";
 import { useNavigate } from "react-router-dom";
 

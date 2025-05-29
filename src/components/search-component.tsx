@@ -1,5 +1,5 @@
 "use client"
-import { CalendarIcon, Car, Hotel, Plane } from "lucide-react"
+import  { CalendarIcon, Car, Plane, Hotel } from "lucide-react"
 // import { Button } from 'primereact/button';
 import { useEffect, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
@@ -23,6 +23,9 @@ import { Datepicker } from "flowbite-react";
 import { flighToSearch, vueloService } from "@/api/vuelosService";
 import { useReservaContext } from "@/context/ReservaContext car";
 import { useNavigate } from "react-router-dom";
+import { City, hotelService, Hotels } from "@/api/hotelService";
+
+
 
 export default function SearchComponent() {
   // Estado para controlar qué pestaña está activa
@@ -36,13 +39,7 @@ export default function SearchComponent() {
     hasta: null,
   });
 
-  const [formHoteles, setFormsHoteles] = useState<reservaHoteles>({
-    ciudad: '',
-    inicio: '',
-    hasta: '',
-    adultos: 0,
-    menores: 0
-  })
+  
 
   const [formCarro, setFormCarro] = useState<reservaCarro>({
     lugar: "",
@@ -55,9 +52,7 @@ export default function SearchComponent() {
     setFormVuelo({ ...formVuelo, [name]: value })
   }
 
-  const handleSelectChangeHoteles = (value: string, name: string) => {
-    setFormsHoteles({ ...formHoteles, [name]: value })
-  }
+
 
   const handleCalendar = (e: Date | undefined) => {
     if (e) {
@@ -65,23 +60,72 @@ export default function SearchComponent() {
     }
   }
 
-  const [cities, setCities] = useState<string[]>([]);
+  const [citie, setCities] = useState<string[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      await loadCitys();
-    })();
-  }, [])
 
-  const loadCitys = async () => {
+
+// Estado para hoteles
+const [cityHotels, setCityHotels] = useState<string[]>([]);
+const [hotels, setHotels] = useState<Hotels[]>([]);
+const [isSearching, setIsSearching] = useState(false);
+const [formHoteles, setFormsHoteles] = useState({
+  ciudad: "",
+  inicio: "",
+  hasta: "",
+});
+
+// Cargar ciudades al inicio
+useEffect(() => {
+  const loadCities = async () => {
     try {
-      const response = await vueloService.getCiudades();
-      const data = await response;
-      setCities(data);
+      const response = await hotelService.getAllCity();
+      if (response) {
+        setCityHotels(response.map(c => c.nombre));
+      }
     } catch (error) {
-      console.error('Error fetching cities:', error);
+      console.error('Error cargando ciudades:', error);
     }
+  };
+  loadCities();
+}, []);
+
+const handleSelectChangeHoteles = (value: string, field: string) => {
+  setFormsHoteles((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+  
+  // Limpiar hoteles cuando cambie la ciudad
+  if (field === "ciudad") {
+    setHotels([]);
   }
+};
+
+const handleSearchHotels = async () => {
+  if (!formHoteles.ciudad) {
+    alert('Por favor selecciona una ciudad');
+    return;
+  }
+
+  setIsSearching(true);
+  try {
+    const hotelesPorCiudad = await hotelService.getHotelsByCity(formHoteles.ciudad);
+    console.log('Hoteles encontrados:', hotelesPorCiudad); // Para debug
+    
+    if (hotelesPorCiudad && Array.isArray(hotelesPorCiudad)) {
+      setHotels(hotelesPorCiudad);
+    } else {
+      setHotels([]);
+      console.warn('No se encontraron hoteles o la respuesta no es válida');
+    }
+  } catch (error) {
+    console.error('Error buscando hoteles:', error);
+    setHotels([]);
+  } finally {
+    setIsSearching(false);
+  }
+};
+
   // const handleCalendar2 = (e: Date | null) => {
   //   if (e) {
   //     setFormVuelo({ ...formVuelo, desde: e.toISOString() });
@@ -156,7 +200,7 @@ const navegation = useNavigate()
                           <SelectValue placeholder="Origen" />
                         </SelectTrigger>
                         <SelectContent>
-                          {cities.map((citie) => (
+                          {citie.map((citie) => (
                             <SelectItem key={citie} value={citie}>
                               {citie}
                             </SelectItem>
@@ -171,7 +215,7 @@ const navegation = useNavigate()
                           <SelectValue placeholder="Destino" />
                         </SelectTrigger>
                         <SelectContent>
-                          {cities.map((citie) => (
+                          {citie.map((citie) => (
                             <SelectItem key={citie} value={citie}>
                               {citie}
                             </SelectItem>
@@ -213,126 +257,143 @@ const navegation = useNavigate()
                 </div>
 
               )}
-
-              {/* Contenido de Hoteles */}
-              {activeTab === "hotels" && (
-                <div className="flex flex-col w-full justify-center ">
-                  <div className="flex justify-center gap-1 my-2">
-                    <div className="flex flex-col w-full max-w-[384px]">
-                      <label htmlFor="">Ciudad</label>
-                      <Select onValueChange={(value) => handleSelectChangeHoteles(value, "ciudad")}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Origen" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {cities.map((citie) => (
-                            <SelectItem key={citie} value={citie}>
-                              {citie}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center my-4 ">
-                    <div className="flex flex-col sm:flex-row gap-2 max-w-[384px]  w-full">
-                      <div className="w-full sm:w-1/2">
-                        <label htmlFor="">Fecha inicio</label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full text-left font-normal",
-                                !formHoteles.inicio && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formHoteles.inicio ? format(formHoteles.inicio, "dd-MM-yyyy") : <span>Pick a date</span>}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={new Date(formHoteles.inicio)}
-                              onSelect={(e) => e && setFormsHoteles({ ...formHoteles, inicio: e?.toDateString() })}
-                              initialFocus
-                              fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
-                              toYear={2030}
-                              disabled={{ before: new Date(Date.now()) }}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <div className="w-full sm:w-1/2">
-                        <label htmlFor="">Fecha de fin</label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full text-left font-normal",
-                                !formHoteles.hasta && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formHoteles.hasta ? format(formHoteles.hasta, "dd-MM-yyyy") : <span>Pick a date</span>}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={new Date(formHoteles.hasta)}
-                              onSelect={(e) => e && setFormsHoteles({ ...formHoteles, hasta: e.toISOString() })}
-                              initialFocus
-                              fromYear={new Date().getFullYear()} // o cualquier año mínimo que necesites
-                              toYear={2030}
-                              disabled={{ before: new Date(Date.now()) }}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <div className="flex justify-center">
-                    <div className="flex grow flex-col sm:flex-row gap-2 max-w-[384px] ">
-                      <div className="w-full sm:w-1/2 ">
-                        <h1 className="self-start">Huespedes</h1>
-                        <Select onValueChange={(value) => handleSelectChangeHoteles(value, "adultos")}>
+                {/* Contenido de Hoteles */}
+                {activeTab === "hotels" && (
+                  <div className="flex flex-col w-full justify-center">
+                    <div className="flex justify-center gap-1 my-2">
+                      <div className="flex flex-col w-full max-w-[384px]">
+                        <label htmlFor="ciudad">Ciudad</label>
+                        <Select 
+                          value={formHoteles.ciudad}
+                          onValueChange={(value) => handleSelectChangeHoteles(value, "ciudad")}
+                        >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Adultos" />
+                            <SelectValue placeholder="Selecciona una ciudad" />
                           </SelectTrigger>
                           <SelectContent>
-                            {numeroDeHuespedes.map((n) => (
-                              <SelectItem key={n} value={n.toString()}>
-                                {n}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="self-end w-full sm:w-1/2 ">
-                        <Select onValueChange={(value) => handleSelectChangeHoteles(value, "menores")}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Menores" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {numeroDeHuespedes.map((n) => (
-                              <SelectItem key={n} value={n.toString()}>
-                                {n}
+                            {cityHotels.map((citie) => (
+                              <SelectItem key={citie} value={citie}>
+                                {citie}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
-                  </div>
-                </div>
-              )}
 
+                    <div className="flex justify-center my-4">
+                      <div className="flex flex-col sm:flex-row gap-2 max-w-[384px] w-full">
+                        <div className="w-full sm:w-1/2">
+                          <label htmlFor="fecha-inicio">Fecha inicio</label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full text-left font-normal",
+                                  !formHoteles.inicio && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {formHoteles.inicio ? format(new Date(formHoteles.inicio), "dd-MM-yyyy") : <span>Seleccionar fecha</span>}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={formHoteles.inicio ? new Date(formHoteles.inicio) : undefined}
+                                onSelect={(date) => {
+                                  if (date) {
+                                    setFormsHoteles({ 
+                                      ...formHoteles, 
+                                      inicio: date.toISOString()
+                                    });
+                                  }
+                                }}
+                                initialFocus
+                                fromYear={new Date().getFullYear()}
+                                toYear={2030}
+                                disabled={{ before: new Date() }}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        <div className="w-full sm:w-1/2">
+                          <label htmlFor="fecha-fin">Fecha de fin</label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full text-left font-normal",
+                                  !formHoteles.hasta && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {formHoteles.hasta ? format(new Date(formHoteles.hasta), "dd-MM-yyyy") : <span>Seleccionar fecha</span>}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={formHoteles.hasta ? new Date(formHoteles.hasta) : undefined}
+                                onSelect={(date) => {
+                                  if (date) {
+                                    setFormsHoteles({ 
+                                      ...formHoteles, 
+                                      hasta: date.toISOString()
+                                    });
+                                  }
+                                }}
+                                initialFocus
+                                fromYear={new Date().getFullYear()}
+                                toYear={2030}
+                                disabled={{ 
+                                  before: formHoteles.inicio ? new Date(formHoteles.inicio) : new Date()
+                                }}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handleSearchHotels}
+                      disabled={!formHoteles.ciudad || isSearching}
+                      className="mt-4 w-full max-w-[384px] mx-auto"
+                    >
+                      {isSearching ? "Buscando..." : "Buscar Hoteles"}
+                    </Button>
+
+                    {/* Mostrar mensaje cuando no hay hoteles */}
+                    {!isSearching && formHoteles.ciudad && hotels.length === 0 && (
+                      <div className="mt-4 text-center text-muted-foreground max-w-[384px] mx-auto">
+                        No se encontraron hoteles en {formHoteles.ciudad}
+                      </div>
+                    )}
+
+                    {/* Lista de hoteles */}
+                    {hotels.length > 0 && (
+                      <div className="mt-6 space-y-4 max-w-[384px] mx-auto">
+                        <h3 className="text-lg font-semibold text-center">
+                          Hoteles en {formHoteles.ciudad} ({hotels.length})
+                        </h3>
+                        {hotels.map((hotel) => (
+                          <div key={hotel.id} className="border rounded-xl p-4 shadow hover:shadow-md transition-shadow">
+                            <h4 className="font-bold text-lg">{hotel.nombre}</h4>
+                            <p className="text-sm text-muted-foreground mb-2">{hotel.descripcion}</p>
+                            <div className="space-y-1 text-sm">
+                              <p>📞 Teléfono: {hotel.telefono}</p>
+                              <p>📧 Email: {hotel.email}</p>
+                              <p>⭐ Estrellas: {"★".repeat(hotel.estrellas)}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               {/* Contenido de Carros */}
               {activeTab === "cars" && (
                 <div>
@@ -344,7 +405,7 @@ const navegation = useNavigate()
                           <SelectValue placeholder="Origen" />
                         </SelectTrigger>
                         <SelectContent>
-                          {cities.map((citie) => (
+                          {citie.map((citie) => (
                             <SelectItem key={citie} value={citie}>
                               {citie}
                             </SelectItem>

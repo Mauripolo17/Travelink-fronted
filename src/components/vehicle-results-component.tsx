@@ -7,6 +7,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Calendar } from "./ui/calendar";
 import { VehicleService } from "@/services/VehicleService";
 import { LocationService, Location } from "@/services/LocationService";
+import { useCarReservaContext } from "@/context/ReservaContextCar";
+
 
 export default function VehicleResultsComponent({ cars }: { cars: CarResponse[] }) {
   const [availableCars, setAvailableCars] = useState<CarResponse[]>(cars);
@@ -16,13 +18,15 @@ export default function VehicleResultsComponent({ cars }: { cars: CarResponse[] 
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const { setCarSelected, setRentalDates } = useCarReservaContext();
+
   // Cargar locaciones al iniciar
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         const data = await LocationService.getAll();
         setLocations(data);
-        if (data.length > 0) setLocacionId(data[0].id); // Seleccionar la primera por defecto
+        if (data.length > 0) setLocacionId(data[0].id);
       } catch (error) {
         console.error("Error al cargar locaciones:", error);
       }
@@ -30,6 +34,18 @@ export default function VehicleResultsComponent({ cars }: { cars: CarResponse[] 
 
     fetchLocations();
   }, []);
+
+  // Actualizar fechas en context cuando cambian las fechas locales
+  useEffect(() => {
+    if (startDate && endDate) {
+      setRentalDates({
+        inicio: startDate.toISOString().split("T")[0],
+        fin: endDate.toISOString().split("T")[0],
+      });
+    } else {
+      setRentalDates(null);
+    }
+  }, [startDate, endDate, setRentalDates]);
 
   const buscarVehiculos = async () => {
     if (!startDate || !endDate || !locacionId) {
@@ -48,6 +64,10 @@ export default function VehicleResultsComponent({ cars }: { cars: CarResponse[] 
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSelectCar = (car: CarResponse) => {
+    setCarSelected(car);
   };
 
   return (
@@ -113,7 +133,11 @@ export default function VehicleResultsComponent({ cars }: { cars: CarResponse[] 
           <p className="col-span-full text-center text-muted-foreground">No hay vehículos disponibles.</p>
         ) : (
           availableCars.map((carro) => (
-            <div key={carro.placa} className="flex flex-col items-center">
+            <div
+              key={carro.placa}
+              className="flex flex-col items-center cursor-pointer"
+              onClick={() => handleSelectCar(carro)}
+            >
               <CardDemo car={carro} />
             </div>
           ))

@@ -8,8 +8,9 @@ export function ModalCar({ car, onClose }: { car: CarResponse; onClose: () => vo
 const navigate = useNavigate();
 
 const handleReservar = (car: CarResponse) => {
-  navigate(`reservar/`); // o la ruta que corresponda
-};
+  const id:number = car.id;
+  navigate(`reservar/${id}`); // o la ruta que corresponda
+}
 
 return (
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">

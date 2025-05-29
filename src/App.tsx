@@ -10,12 +10,12 @@ import  Dashboard  from './pages/dashboard-page.tsx';
 import FlightResultsPage from './pages/flight-results.-page.tsx';
 import { AuthProvider } from './context/AuthContext.tsx';
 import PrivateRoutes from './PrivateRoutes.tsx';
-import { ReservaProvider } from './context/ReservaContext car.tsx';
-import { Reserva } from './components/reserva.tsx';
+import { ReservaProvider } from './context/ReservaContextFly.tsx';
 import ReservaPage from './pages/reserva-page.tsx';
 import FlightResults from './pages/flight-results.-page.tsx';
 import VehicleResults from './pages/vehicle-results-page.tsx';
 import VehicleRentPage from './pages/vehicle-rent-page.tsx';
+import { CarReservaProvider } from './context/ReservaContextCar.tsx';
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
       <div className='contenedor2 '>
       <AuthProvider>
         <ReservaProvider>
+        <CarReservaProvider>
         <Router>
           <Header />
           <main className="flex-1">
@@ -38,11 +39,12 @@ function App() {
               
               <Route path="/flights" element={<FlightResults />} />
               <Route path="/vehicles" element={<VehicleResults/>} />
-              <Route path="/vehicles/reservar/" element={<VehicleRentPage/>} />
+              <Route path="/vehicles/reservar/:id" element={<VehicleRentPage/>} />
             </Routes>
           </main>
           <Footer />
         </Router>
+        </CarReservaProvider>
         </ReservaProvider>
         </AuthProvider>
       </div>

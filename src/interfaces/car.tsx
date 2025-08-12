@@ -60,3 +60,18 @@ export interface paymentCar {
     mouunt: number;
     status: string;
 }
+export function getDifferenceInDays(dateStr1: string, dateStr2: string): number {
+    const parseDate = (str: string): Date => {
+      const [year, month, day] = str.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    };
+  
+    const date1 = parseDate(dateStr1);
+    const date2 = parseDate(dateStr2);
+  
+    const diffInMs = Math.abs(date2.getTime() - date1.getTime());
+    return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  }
+  
+
+  

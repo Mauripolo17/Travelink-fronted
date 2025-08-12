@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { VueloInfo } from "@/api/vuelosService"
 import { useReservaContext } from "@/context/ReservaContext"
 import { set } from "date-fns"
-import { CarResponse } from "@/interfaces/car"
+import { CarResponse, getDifferenceInDays } from "@/interfaces/car"
 
 
 
@@ -21,7 +21,7 @@ interface PaymentMethodPropsCar {
 
 export default function PaymentMethodCar({ carDetails }: PaymentMethodPropsCar) {
   const [selectedMethod, setSelectedMethod] = useState("card")
-
+  const {carToSearch} = useReservaContext()
   const paymentMethods = [
     {
       id: "card",
@@ -64,6 +64,15 @@ export default function PaymentMethodCar({ carDetails }: PaymentMethodPropsCar) 
       }, 3000) // Simulate a delay for payment processing
     }
     e.preventDefault()
+  }
+
+  function calculateTotalAmount(): number {
+    const days = getDifferenceInDays(carToSearch.hasta.slice(0, 10), carToSearch.desde.slice(0, 10))
+    console.log('fecha inicio:', carToSearch.desde.slice(0, 10))
+    console.log('fecha fin:', carToSearch.hasta.slice(0, 10))
+    console.log("Days between dates:", getDifferenceInDays(carToSearch.desde.slice(0, 10), carToSearch.hasta.slice(0, 10)))
+    console.log("Total price:", days*carDetails.precio)
+    return days * carDetails.precio;
   }
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -177,7 +186,7 @@ export default function PaymentMethodCar({ carDetails }: PaymentMethodPropsCar) 
               <DollarSign className="h-4 w-4 text-gray-700" />
               <span>Total Amount:</span>
             </div>
-            <div className="text-lg">{formatCurrency(carDetails.precio, "USD")}</div>
+            <div className="text-lg">{formatCurrency(calculateTotalAmount(), "USD")}</div>
           </div>
         </div>
       </CardContent>

@@ -3,6 +3,8 @@ import { Plane, Home, Car, Hotel, Settings, Search } from "lucide-react"
 import { useNavigate } from "react-router-dom";
 import { NavUser } from "./nav-user";
 import { useAuth } from "@/context/AuthContext";
+import { useDashboardContext } from "@/context/DashboardContext";
+import { set } from "date-fns";
 
 // Menu items.
 const items = [
@@ -21,11 +23,11 @@ const items = [
         url: "#",
         icon: Car,
     },
-    {
-        title: "Mis hoteles",
-        url: "#",
-        icon: Hotel,
-    },
+    // {
+    //     title: "Mis hoteles",
+    //     url: "#",
+    //     icon: Hotel,
+    // },
     {
         title: "Buscar reserva",
         url: "#",
@@ -33,26 +35,10 @@ const items = [
     },
 ]
 
-const data = {
-    teams: [
-        {
-            name: "Acme Inc",
-            logo: '',
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: '',
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: 'Command',
-            plan: "Free",
-        },
-    ],
-}
+
+
 export function AppSidebar() {
+    const { item, setItem } = useDashboardContext();
     const { user } = useAuth();
     const navigation = useNavigate();
     return (
@@ -62,7 +48,7 @@ export function AppSidebar() {
                     <NavUser />
                 </div>
                 {items.map((item) => (
-                    <div className="flex w-full hover:bg-gray-200 rounded-lg p-2 gap-2 cursor-pointer" key={item.title} onClick={() => navigation(item.url)}>
+                    <div className="flex w-full hover:bg-gray-200 rounded-lg p-2 gap-2 cursor-pointer" key={item.title} onClick={() => setItem(item.title)}>
                         <item.icon className="h-5 w-5  text-gray-500" />
                         {item.title}
                     </div>

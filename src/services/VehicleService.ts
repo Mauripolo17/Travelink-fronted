@@ -2,6 +2,7 @@ import axios from "axios";
 import { Alquiler, AlquilerResponse, CarResponse } from "@/interfaces/car";
 import { reservaCarro } from "@/interfaces/reservaCarro";
 import { create } from "domain";
+import { get } from "http";
 
 const API_URL = "http://localhost:8081/reservas-vehiculos/v1/";
 
@@ -20,4 +21,11 @@ export const VehicleService = {
     );
     return response.data;
   },
+
+  getByClientId: async (clientId: string): Promise<AlquilerResponse[]> => {
+    const response = await axios.get<AlquilerResponse[]>(
+      `${API_URL}Reservar/${clientId}`
+    );
+    return response.data;
+  }
 };

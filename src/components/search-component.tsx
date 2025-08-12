@@ -133,7 +133,7 @@ export default function SearchComponent() {
               <Plane className="h-4 w-4" />
               Vuelos
             </button>
-            <button
+            {/* <button
               className={`flex items-center gap-2 px-2 py-3 font-medium text-sm ${activeTab === "hotels"
                 ? "border-b-2 border-blueT text-blueT bg-primary-50"
                 : "text-gray-600 hover:bg-gray-50"
@@ -142,7 +142,7 @@ export default function SearchComponent() {
             >
               <Hotel className="h-4 w-4" />
               Hoteles
-            </button>
+            </button> */}
             <button
               className={`flex items-center gap-2 px-2 py-3 font-medium text-sm ${activeTab === "cars"
                 ? "border-b-2 border-blueT text-blueT bg-primary-50"

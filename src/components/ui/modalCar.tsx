@@ -9,10 +9,13 @@ import { set } from "date-fns";
 export function ModalCar({ car, onClose }: { car: CarResponse; onClose: () => void }) {
 
 const navigate = useNavigate();
-const {carToRent, setCarToRent} = useReservaContext();
+const {carToRent, setCarToRent, setPaymentSuccess,  paymentSuccess} = useReservaContext();
 
 const handleReservar = (car: CarResponse) => {
   setCarToRent(car);
+  if (setPaymentSuccess) {
+    setPaymentSuccess(false); // Reinicia el estado de éxito del pago
+  }
   setTimeout(() => {
     navigate(`reservar/`);
   }, 1000); // Simula un retraso para mostrar el mensaje de reserva

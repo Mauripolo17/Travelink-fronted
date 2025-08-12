@@ -72,6 +72,7 @@ export default function VehicleToRent() {
                 description: `Su reserva ha sido procesada con exito.`,
               });
             managePaymentCar(alquier);
+            
             console.log("Reservation created successfully:", response);
             navegation("/");
         } catch (error) {

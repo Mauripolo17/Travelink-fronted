@@ -13,7 +13,7 @@ import {
 import { getFirestore, doc, collection, setDoc, getDoc } from "firebase/firestore";
 import { useAuth } from "./AuthContext.tsx";
 import { reservaCarro } from "@/interfaces/reservaCarro.tsx";
-import { CarResponse, paymentCar } from "@/interfaces/car.tsx";
+import { CarResponse, getDifferenceInDays, paymentCar } from "@/interfaces/car.tsx";
 const auth = getAuth(firebaseApp);
 
 interface ReservaContextType {
@@ -77,7 +77,7 @@ export const ReservaProvider = ({ children }: { children: ReactNode }) => {
       idCar: alquiler.idCar,
       idClient: alquiler.idClient,
       reservationDate: alquiler.reservationDate,
-      mouunt: alquiler.mouunt,
+      mouunt: alquiler.mouunt*getDifferenceInDays(carToSearch.hasta.slice(0, 10), carToSearch.desde.slice(0, 10)),
       status: alquiler.status,
     }
     const docRef = doc(firestore, `paymentsCar/${alquiler.idReservation}`);
